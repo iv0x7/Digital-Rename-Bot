@@ -4,9 +4,13 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
 import os, time, asyncio, shutil
 from helper.utils import progress_for_pyrogram, humanbytes
+from config import Config
 
 UPLOAD_TEXT = "Uploading Started...."
 DOWNLOAD_TEXT = "Download Started..."
+
+# මෙන්න මේ පේළිය අනිවාර්යයෙන්ම තිබිය යුතුයි
+app = Client("DigitalRenameBot", api_id=Config.API_ID, api_hash=Config.API_HASH, session_string=Config.STRING_SESSION)
 
 @Client.on_message(filters.private & (filters.audio | filters.document | filters.video))
 async def rename_start(client, message):
@@ -48,7 +52,6 @@ async def refunc(client, message):
 
 @Client.on_callback_query(filters.regex("upload"))
 async def upload_doc(bot, update):
-    # ඉඩ ඉතිරි කරගන්න පරණ renames ෆෝල්ඩර් එක සම්පූර්ණයෙන්ම ක්ලීන් කරමු
     if os.path.isdir("/tmp/renames"):
         shutil.rmtree("/tmp/renames")
     os.makedirs("/tmp/renames")
@@ -81,8 +84,6 @@ async def upload_doc(bot, update):
     except Exception as e:
         await rkn_processing.edit(f"Upload Error: {e}")
     finally:
-        # වැදගත්ම කොටස: ෆයිල් එක අප්ලෝඩ් වුණත් නැතත් සර්වර් එකෙන් මකා දමන්න
         if os.path.exists(dl_path):
             os.remove(dl_path)
-        # මුළු ෆෝල්ඩර් එකම ක්ලීන් කරන්න
         shutil.rmtree("/tmp/renames", ignore_errors=True)
